@@ -25,6 +25,7 @@ window.renderStatistics = function (ctx, names, times) {
   var oneSecondPixel = 0;
   var columnHeight = 0;
   var myIndex;
+  var tempTime;
   var maxTime = 0;
   // Ищем максимальное время
   for (i = 0; i < times.length; i++) {
@@ -50,8 +51,11 @@ window.renderStatistics = function (ctx, names, times) {
   // Переставляем Вы на первое место
   myIndex = names.indexOf('Вы');
   if (!myIndex.isNan) {
-    names[myIndex] = names [0];
+    names[myIndex] = names[0];
     names[0] = 'Вы';
+    tempTime = times[0];
+    times[myIndex] = times[0];
+    times[0] = tempTime;
   }
   // Определяем начальную велечину отступа слева для колонки
   paddingLeft = CLOUD_X + 4 * GAP;
