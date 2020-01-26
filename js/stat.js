@@ -66,6 +66,7 @@ window.renderStatistics = function (ctx, names, times) {
   };
   var gap = 10;
   var textHeight = 16;
+  var histogramHeight = 150;
 
   setCtxFont(ctx, textHeight);
   // Рисуем облако, возвращаем координаты области контента
@@ -81,7 +82,7 @@ window.renderStatistics = function (ctx, names, times) {
   cursorX += 2 * gap;
   cursorY = contentArea.bottomY;
   // Рисуем гистограмму
-  var oneSecInPixel = getOneSecInPixel(150 - gap - textHeight, times);
+  var oneSecInPixel = getOneSecInPixel(histogramHeight - gap - textHeight, times);
   for (var i = 0; i < names.length; i++) {
     cursorX = paintPlayerStatistics(ctx, cursorX, cursorY, names[i], times[i], oneSecInPixel, gap);
   }
