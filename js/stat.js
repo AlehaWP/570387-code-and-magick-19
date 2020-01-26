@@ -53,10 +53,11 @@ var paintPlayerStatistics = function (ctx, x, y, column) {
 
 var paintHistogram = function (ctx, cursorX, cursorY, names, times, histogramHeight, textHeight, gap) {
   var oneSecInPixel = getOneSecInPixel(histogramHeight - gap - textHeight, times);
-  var column = {};
-  column.width = 40;
-  column.margin = 50;
-  column.gap = gap;
+  var column = {
+    width: 40,
+    margin: 50,
+    gap: gap
+  };
   for (var i = 0; i < names.length; i++) {
     column.height = oneSecInPixel * times[i];
     column.name = names[i];
