@@ -1,84 +1,82 @@
 'use strict';
 
-var CLOUD_WIDTH = 420;
-var CLOUD_HEIGHT = 270;
-var CLOUD_X = 100;
-var CLOUD_Y = 10;
-var bottomY = CLOUD_Y + CLOUD_HEIGHT;
 var GAP = 10;
-var textHeight = 16;
+var CLOUD = {
+  width: 420,
+  height: 270,
+  x: 100,
+  y: 10,
+  contentX: 120,
+  contentY: 30,
+  bottomContentY: 250,
+  gap: 10,
+  text: {
+    height: 16,
+    color: '#000'
+  }
+};
+
+var TEXT_PARAMS = {
+  height: 16,
+  color: '#000'
+};
+
 // Функция рисования  облака
-var renderCloud = function (ctx, x, y, color, width, height) {
+var renderCloudRect = function (ctx, x, y, color, width, height) {
   ctx.fillStyle = color;
   ctx.fillRect(x, y, width, height);
 };
 
-window.renderStatistics = function (ctx, names, times) {
+var writeInCloud = function (text, ctx, height, color, x, y, marginBottom) {
+  ctx.font = 'none ' + height + 'px PT Mono';
+  ctx.fillStyle = color;
+  ctx.textBaseline = 'top';
+  ctx.fillText(text, x, y);
+  return y + height + marginBottom;
+};
+
+var getOneSecInPixel = function (maxHeight, arrTimes) {
+  return maxHeight / Math.max.apply(null, arrTimes);
+};
+
+var getRandomColor = function (color) {
+  var saturationValue = Math.round(Math.random() * 100);
+  return 'hsl(' + color + ',' + saturationValue + '%,50%)';
+};
+
+var getColumnColor = function (name) {
+  if (name.toLowerCase() === 'вы') {
+    return 'rgba(255, 0, 0, 1)';
+  }
+  return getRandomColor('240');
+};
+
+var paintPlayerStatistics = function (name, time, secInPixel, textColor, textHeight, ctx, x, y, margin) {
+  var columnHeight = Math.round(secInPixel * time);
   var columnWidth = 40;
   var columnMargin = 50;
-  var histogramHeight = 150;
-  var textColor = '#000';
-  var paddingLeft = CLOUD_X + 2 * GAP;
-  var i;
-  var saturationValue = 0;
-  var maxColumnHeight = histogramHeight - GAP - textHeight;
-  var oneSecondPixel = 0;
-  var columnHeight = 0;
-  var myIndex;
-  var tempTime;
-  var maxTime = 0;
-  // Ищем максимальное время
-  for (i = 0; i < times.length; i++) {
-    times[i] = Math.round(times[i]);
-    if (times[i] > maxTime) {
-      maxTime = times[i];
-    }
-  }
-  // Вычисляем вес одной секунды в пикселях
-  oneSecondPixel = maxColumnHeight / maxTime;
+  writeInCloud(name, ctx, textHeight, textColor, x, y, margin);
+  renderCloudRect(ctx, x, y - margin, getColumnColor(name), columnWidth, -columnHeight);
+  writeInCloud(Math.round(time), ctx, textHeight, textColor, x, y - columnHeight - 3 * margin, margin);
+
+  return x + columnWidth + columnMargin;
+};
+
+window.renderStatistics = function (ctx, names, times) {
+  var cursorY = CLOUD.contentY;
 
   // Рисуем облако
-  renderCloud(ctx, CLOUD_X + GAP, CLOUD_Y + GAP, 'rgba(0, 0, 0, 0.7)', CLOUD_WIDTH, CLOUD_HEIGHT);
-  renderCloud(ctx, CLOUD_X, CLOUD_Y, '#fff', CLOUD_WIDTH, CLOUD_HEIGHT);
+  renderCloudRect(ctx, CLOUD.x + GAP, CLOUD.y + GAP, 'rgba(0, 0, 0, 0.7)', CLOUD.width, CLOUD.height);
+  renderCloudRect(ctx, CLOUD.x, CLOUD.y, '#fff', CLOUD.width, CLOUD.height);
 
-  // Определяем шрифт и цвет текста по умолчанию
-  ctx.font = 'none ' + textHeight + 'px PT Mono';
-  ctx.fillStyle = textColor;
-  ctx.textBaseline = 'top';
-  // Пишем заголовок
-  ctx.fillText('Ура вы победили!', paddingLeft, CLOUD_Y + 2 * GAP);
-  ctx.fillText('Список результатов:', paddingLeft, CLOUD_Y + 3 * GAP + textHeight);
-  // Переставляем Вы на первое место
-  myIndex = names.indexOf('Вы');
-  if (!myIndex.isNan) {
-    names[myIndex] = names[0];
-    names[0] = 'Вы';
-    tempTime = times[0];
-    times[myIndex] = times[0];
-    times[0] = tempTime;
-  }
+  cursorY = writeInCloud('Ура вы победили!', ctx, TEXT_PARAMS.height, TEXT_PARAMS.color, CLOUD.contentX, cursorY, GAP);
+  writeInCloud('Список результатов:', ctx, TEXT_PARAMS.height, TEXT_PARAMS.color, CLOUD.contentX, cursorY, GAP);
+
   // Определяем начальную велечину отступа слева для колонки
-  paddingLeft = CLOUD_X + 4 * GAP;
+  var cursorX = CLOUD.contentX + 2 * GAP;
   // Рисуем гистограмму
-  for (i = 0; i < names.length; i++) {
-    // Вычисляем высоту колонки
-    columnHeight = Math.round(oneSecondPixel * times[i]);
-
-    // Устанавливаем цвет колонки. Первая красная, остальные оттенки синего с рандомным смещением
-    if (i === 0) {
-      ctx.fillStyle = 'rgba(255, 0, 0, 1)';
-    } else {
-      saturationValue = Math.round(Math.random() * 100);
-      ctx.fillStyle = 'hsl(240,' + saturationValue + '%,50%)';
-    }
-
-    // Рисуем колонку и подписываем. Все отсчитываем от низ облака
-    ctx.fillRect(paddingLeft, bottomY - 4 * GAP, columnWidth, -columnHeight);
-    ctx.fillStyle = textColor;
-    ctx.fillText(times[i], paddingLeft, bottomY - 6 * GAP - columnHeight);
-    ctx.fillText(names[i], paddingLeft, bottomY - 3 * GAP);
-    // Смещаем отступ для следующей колонки
-    paddingLeft += (columnWidth + columnMargin);
+  var oneSecInPixel = getOneSecInPixel(150 - GAP - TEXT_PARAMS.height, times);
+  for (var i = 0; i < names.length; i++) {
+    cursorX = paintPlayerStatistics(names[i], times[i], oneSecInPixel, TEXT_PARAMS.color, TEXT_PARAMS.height, ctx, cursorX, CLOUD.bottomContentY, GAP);
   }
-
 };
