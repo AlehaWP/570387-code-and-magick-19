@@ -6,23 +6,17 @@ var renderRect = function (ctx, x, y, color, width, height) {
   ctx.fillRect(x, y, width, height);
 };
 
-var renderCloud = function (ctx, gap) {
-  var CLOUD = {
-    width: 420,
-    height: 270,
-    x: 100,
-    y: 10,
-  };
-
+// Функция рисования  облака
+var renderCloud = function (ctx, gap, cloud) {
   var content = {
-    x: CLOUD.x + 2 * gap,
-    y: CLOUD.y + 2 * gap,
-    bottomY: CLOUD.y + CLOUD.height - 3 * gap,
-    bottomX: CLOUD.x + CLOUD.width - 2 * gap
+    x: cloud.x + 2 * gap,
+    y: cloud.y + 2 * gap,
+    bottomY: cloud.y + cloud.height - 3 * gap,
+    bottomX: cloud.x + cloud.width - 2 * gap
   };
 
-  renderRect(ctx, CLOUD.x + gap, CLOUD.y + gap, 'rgba(0, 0, 0, 0.7)', CLOUD.width, CLOUD.height);
-  renderRect(ctx, CLOUD.x, CLOUD.y, '#fff', CLOUD.width, CLOUD.height);
+  renderRect(ctx, cloud.x + gap, cloud.y + gap, 'rgba(0, 0, 0, 0.7)', cloud.width, cloud.height);
+  renderRect(ctx, cloud.x, cloud.y, '#fff', cloud.width, cloud.height);
   return content;
 };
 
@@ -64,25 +58,31 @@ var paintPlayerStatistics = function (ctx, x, y, name, time, secInPixel, margin)
 };
 
 window.renderStatistics = function (ctx, names, times) {
-  var GAP = 10;
+  var cloud = {
+    width: 420,
+    height: 270,
+    x: 100,
+    y: 10,
+  };
+  var gap = 10;
   var textHeight = 16;
 
   setCtxFont(ctx, textHeight);
   // Рисуем облако, возвращаем координаты области контента
-  var contentArea = renderCloud(ctx, GAP);
+  var contentArea = renderCloud(ctx, gap, cloud);
   var cursorX = contentArea.x;
   var cursorY = contentArea.y;
 
   writeInCloud(ctx, cursorX, cursorY, 'Ура вы победили!');
-  cursorY = cursorY + textHeight + GAP;
+  cursorY = cursorY + textHeight + gap;
   writeInCloud(ctx, cursorX, cursorY, 'Список результатов:');
 
   // Определяем начальную велечину отступа слева для колонки
-  cursorX += 2 * GAP;
+  cursorX += 2 * gap;
   cursorY = contentArea.bottomY;
   // Рисуем гистограмму
-  var oneSecInPixel = getOneSecInPixel(150 - GAP - textHeight, times);
+  var oneSecInPixel = getOneSecInPixel(150 - gap - textHeight, times);
   for (var i = 0; i < names.length; i++) {
-    cursorX = paintPlayerStatistics(ctx, cursorX, cursorY, names[i], times[i], oneSecInPixel, GAP);
+    cursorX = paintPlayerStatistics(ctx, cursorX, cursorY, names[i], times[i], oneSecInPixel, gap);
   }
 };
