@@ -27,12 +27,12 @@ var renderCloudRect = function (ctx, x, y, color, width, height) {
   ctx.fillRect(x, y, width, height);
 };
 
-var writeInCloud = function (text, ctx, height, color, x, y, marginBottom) {
-  ctx.font = 'none ' + height + 'px PT Mono';
-  ctx.fillStyle = color;
+var writeInCloud = function (ctx, x, y, text, textParams, marginBottom) {
+  ctx.font = 'none ' + textParams.height + 'px PT Mono';
+  ctx.fillStyle = textParams.color;
   ctx.textBaseline = 'top';
   ctx.fillText(text, x, y);
-  return y + height + marginBottom;
+  return y + textParams.height + marginBottom;
 };
 
 var getOneSecInPixel = function (maxHeight, arrTimes) {
@@ -51,13 +51,13 @@ var getColumnColor = function (name) {
   return getRandomColor('240');
 };
 
-var paintPlayerStatistics = function (name, time, secInPixel, textColor, textHeight, ctx, x, y, margin) {
+var paintPlayerStatistics = function (name, time, secInPixel, textParams, ctx, x, y, margin) {
   var columnHeight = Math.round(secInPixel * time);
   var columnWidth = 40;
   var columnMargin = 50;
-  writeInCloud(name, ctx, textHeight, textColor, x, y, margin);
+  writeInCloud(ctx, x, y, name, textParams, margin);
   renderCloudRect(ctx, x, y - margin, getColumnColor(name), columnWidth, -columnHeight);
-  writeInCloud(Math.round(time), ctx, textHeight, textColor, x, y - columnHeight - 3 * margin, margin);
+  writeInCloud(ctx, x, y - columnHeight - 3 * margin, Math.round(time), textParams, margin);
 
   return x + columnWidth + columnMargin;
 };
@@ -69,14 +69,14 @@ window.renderStatistics = function (ctx, names, times) {
   renderCloudRect(ctx, CLOUD.x + GAP, CLOUD.y + GAP, 'rgba(0, 0, 0, 0.7)', CLOUD.width, CLOUD.height);
   renderCloudRect(ctx, CLOUD.x, CLOUD.y, '#fff', CLOUD.width, CLOUD.height);
 
-  cursorY = writeInCloud('Ура вы победили!', ctx, TEXT_PARAMS.height, TEXT_PARAMS.color, CLOUD.contentX, cursorY, GAP);
-  writeInCloud('Список результатов:', ctx, TEXT_PARAMS.height, TEXT_PARAMS.color, CLOUD.contentX, cursorY, GAP);
+  cursorY = writeInCloud(ctx, CLOUD.contentX, cursorY, 'Ура вы победили!', TEXT_PARAMS, GAP);
+  writeInCloud(ctx, CLOUD.contentX, cursorY, 'Список результатов:', TEXT_PARAMS, GAP);
 
   // Определяем начальную велечину отступа слева для колонки
   var cursorX = CLOUD.contentX + 2 * GAP;
   // Рисуем гистограмму
   var oneSecInPixel = getOneSecInPixel(150 - GAP - TEXT_PARAMS.height, times);
   for (var i = 0; i < names.length; i++) {
-    cursorX = paintPlayerStatistics(names[i], times[i], oneSecInPixel, TEXT_PARAMS.color, TEXT_PARAMS.height, ctx, cursorX, CLOUD.bottomContentY, GAP);
+    cursorX = paintPlayerStatistics(names[i], times[i], oneSecInPixel, TEXT_PARAMS, ctx, cursorX, CLOUD.bottomContentY, GAP);
   }
 };
