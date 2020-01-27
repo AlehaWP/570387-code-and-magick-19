@@ -1,97 +1,81 @@
 'use strict';
 
-// Функция рисования  прямоугольника
-var renderRect = function (ctx, x, y, color, width, height) {
-  ctx.fillStyle = color;
-  ctx.fillRect(x, y, width, height);
-};
+var GAP = 10;
+var TEXT_HEIGHT = 16;
 
-var setCtxFont = function (ctx, height) {
-  ctx.font = 'none ' + height + 'px PT Mono';
-  ctx.textBaseline = 'top';
+var CLOUD = {
+  width: 420,
+  height: 270,
+  x: 100,
+  y: 10,
+  contentX: 120,
+  contentY: 30,
+  contentRightX: 500,
+  contentBottomY: 240
 };
 
 var writeInCloud = function (ctx, x, y, text) {
+  ctx.font = 'none ' + TEXT_HEIGHT + 'px PT Mono';
+  ctx.textBaseline = 'top';
   ctx.fillStyle = '#000';
   ctx.fillText(text, x, y);
 };
+
 // Функция рисования  облака
-var renderCloud = function (ctx, gap, cloud) {
-  var content = {
-    x: cloud.x + 2 * gap,
-    y: cloud.y + 2 * gap,
-    bottomY: cloud.y + cloud.height - 3 * gap,
-    bottomX: cloud.x + cloud.width - 2 * gap
-  };
-
-  renderRect(ctx, cloud.x + gap, cloud.y + gap, 'rgba(0, 0, 0, 0.7)', cloud.width, cloud.height);
-  renderRect(ctx, cloud.x, cloud.y, '#fff', cloud.width, cloud.height);
-  return content;
+var renderCloud = function (ctx) {
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+  ctx.fillRect(CLOUD.x + GAP, CLOUD.y + GAP, CLOUD.width, CLOUD.height);
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(CLOUD.x, CLOUD.y, CLOUD.width, CLOUD.height);
 };
 
-var getOneSecInPixel = function (maxHeight, arrTimes) {
-  return maxHeight / Math.max.apply(null, arrTimes);
+var getMaxValue = function (arr) {
+  return Math.max.apply(null, arr);
 };
 
-var getRandomColor = function (color) {
+var getRandomColor = function () {
   var saturationValue = Math.round(Math.random() * 100);
-  return 'hsl(' + color + ',' + saturationValue + '%,50%)';
+  return 'hsl(240,' + saturationValue + '%,50%)';
 };
 
-var getColumnColor = function (name) {
+
+var getColumnColorByName = function (name) {
   if (name.toLowerCase() === 'вы') {
     return 'rgba(255, 0, 0, 1)';
   }
-  return getRandomColor('240');
+  return getRandomColor();
 };
 
-var paintPlayerStatistics = function (ctx, x, y, column) {
-  writeInCloud(ctx, x, y, column.name);
-  renderRect(ctx, x, y - column.gap, column.color, column.width, -column.height);
-  writeInCloud(ctx, x, y - column.height - 3 * column.gap, column.result);
-};
-
-var paintHistogram = function (ctx, cursorX, cursorY, names, times, histogramHeight, textHeight, gap) {
-  var oneSecInPixel = getOneSecInPixel(histogramHeight - gap - textHeight, times);
-  var column = {
-    width: 40,
-    margin: 50,
-    gap: gap
-  };
+var paintHistogram = function (ctx, names, times) {
+  var columnWidth = 40;
+  var columnMargin = 50;
+  var histogramHeight = 150;
+  var placeForColumnsHeight = histogramHeight - GAP - TEXT_HEIGHT;
+  var maxTime = getMaxValue(times);
+  var oneSecInPixel = placeForColumnsHeight / maxTime;
+  var cursorX = CLOUD.contentX + 2 * GAP;
+  var cursorY = CLOUD.contentBottomY;
+  // Все рисуется от низа отсюда - в перемещении курсора по Y
   for (var i = 0; i < names.length; i++) {
-    column.height = oneSecInPixel * times[i];
-    column.name = names[i];
-    column.result = Math.round(times[i]);
-    column.color = getColumnColor(names[i]);
-    paintPlayerStatistics(ctx, cursorX, cursorY, column);
-    cursorX += column.width + column.margin;
+    var columnHeight = oneSecInPixel * times[i];
+    writeInCloud(ctx, cursorX, cursorY, names[i]);
+    ctx.fillStyle = getColumnColorByName(names[i]);
+    cursorY -= GAP;
+    ctx.fillRect(cursorX, cursorY, columnWidth, -columnHeight);
+    cursorY -= (2 * GAP + columnHeight);
+    writeInCloud(ctx, cursorX, cursorY, Math.round(times[i]));
+    // Передвигаем курсор на новую точку для рисования следующей колонки
+    cursorX += columnWidth + columnMargin;
+    cursorY = CLOUD.contentBottomY;
   }
 };
 
 window.renderStatistics = function (ctx, names, times) {
-  var cloud = {
-    width: 420,
-    height: 270,
-    x: 100,
-    y: 10,
-  };
-  var gap = 10;
-  var textHeight = 16;
-  var histogramHeight = 150;
-
-  setCtxFont(ctx, textHeight);
-  // Рисуем облако, возвращаем координаты области контента
-  var contentArea = renderCloud(ctx, gap, cloud);
-  var cursorX = contentArea.x;
-  var cursorY = contentArea.y;
-
+  var cursorX = CLOUD.contentX;
+  var cursorY = CLOUD.contentY;
+  renderCloud(ctx);
   writeInCloud(ctx, cursorX, cursorY, 'Ура вы победили!');
-  cursorY = cursorY + textHeight + gap;
+  cursorY = cursorY + TEXT_HEIGHT + GAP;
   writeInCloud(ctx, cursorX, cursorY, 'Список результатов:');
-
-  // Определяем начальную велечину отступа слева для колонки
-  cursorX += 2 * gap;
-  cursorY = contentArea.bottomY;
-  // Рисуем гистограмму
-  paintHistogram(ctx, cursorX, cursorY, names, times, histogramHeight, textHeight, gap);
+  paintHistogram(ctx, names, times);
 };
