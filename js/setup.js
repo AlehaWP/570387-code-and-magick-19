@@ -40,25 +40,28 @@ var createWizardElement = function (elementTemplate, objWizard) {
   return elementTemplate;
 };
 
+var createFragmentWithWizards = function (wizardTemplate, wizards) {
+  var fragment = document.createDocumentFragment();
+  for (var i = 0; i < wizards.length; i++) {
+    fragment.appendChild(createWizardElement(wizardTemplate.cloneNode(true), wizards[i]));
+  }
+  return fragment;
+};
+
 var wizarsdsQuantity = 4;
+var wizards = createWizardsArr(wizarsdsQuantity);
 var wizardTemplate = document.querySelector('#similar-wizard-template')
     .content.querySelector('.setup-similar-item');
-
-var wizards = createWizardsArr(wizarsdsQuantity);
-
-var fragment = document.createDocumentFragment();
-for (var i = 0; i < wizards.length; i++) {
-  fragment.appendChild(createWizardElement(wizardTemplate.cloneNode(true), wizards[i]));
-}
+var fragmentToAdd = createFragmentWithWizards(wizardTemplate, wizards);
 
 var setupWindow = showElement('.setup');
 var similarList = setupWindow.querySelector('.setup-similar-list');
-similarList.appendChild(fragment);
+similarList.appendChild(fragmentToAdd);
 showElement('.setup-similar');
 
 wizarsdsQuantity = null;
 wizardTemplate = null;
 wizards = null;
-fragment = null;
+fragmentToAdd = null;
 setupWindow = null;
 similarList = null;
