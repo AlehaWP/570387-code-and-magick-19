@@ -2,7 +2,6 @@
 
 var showElement = function (selector) {
   var element = document.querySelector(selector);
-
   element.classList.remove('hidden');
   return element;
 };
@@ -42,9 +41,6 @@ var createWizardElement = function (elementTemplate, objWizard) {
 };
 
 var wizarsdsQuantity = 4;
-var setupWindow = showElement('.setup');
-var similarList = setupWindow.querySelector('.setup-similar-list');
-
 var wizardTemplate = document.querySelector('#similar-wizard-template')
     .content.querySelector('.setup-similar-item');
 
@@ -54,6 +50,15 @@ var fragment = document.createDocumentFragment();
 for (var i = 0; i < wizards.length; i++) {
   fragment.appendChild(createWizardElement(wizardTemplate.cloneNode(true), wizards[i]));
 }
-similarList.appendChild(fragment);
 
+var setupWindow = showElement('.setup');
+var similarList = setupWindow.querySelector('.setup-similar-list');
+similarList.appendChild(fragment);
 showElement('.setup-similar');
+
+wizarsdsQuantity = null;
+wizardTemplate = null;
+wizards = null;
+fragment = null;
+setupWindow = null;
+similarList = null;
