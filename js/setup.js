@@ -121,6 +121,7 @@ var changeElementColor = function (element, colors) {
 
 var changeElementColorByBackgroundColor = function (element, colors) {
   var currentColor = element.style.backgroundColor;
+  // менять через input
   console.log(element.style.backgroundColor);
   var currentColorIndex = colors.indexOf(currentColor);
   var newIndex = (currentColorIndex + 1) % colors.length;
