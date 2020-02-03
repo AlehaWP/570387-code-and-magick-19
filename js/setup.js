@@ -10,6 +10,9 @@ var EYES_COLORS = ['black', 'red', 'blue', 'yellow', 'green'];
 
 var WIZARDS_QUANTITY = 4;
 
+var ENTER_KEY = 'Enter';
+var ESC_KEY = 'Escape';
+
 var returnRandomElement = function (arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 };
@@ -50,11 +53,49 @@ var wizardTemplate = document.querySelector('#similar-wizard-template')
     .content.querySelector('.setup-similar-item');
 var fragmentToAdd = createFragmentWithWizards(wizardTemplate, wizards);
 
-var setupWindow = document.querySelector('.setup');
-setupWindow.classList.remove('hidden');
-
 var setupSimilar = document.querySelector('.setup-similar');
 setupSimilar.classList.remove('hidden');
 
 var similarList = setupSimilar.querySelector('.setup-similar-list');
 similarList.appendChild(fragmentToAdd);
+
+
+var setupWindow = document.querySelector('.setup');
+
+var openSetupWindow = function () {
+  setupWindow.classList.remove('hidden');
+  document.addEventListener('keydown', onEscButtonClick);
+};
+
+var buttonSetupOpen = document.querySelector('.setup-open-icon');
+buttonSetupOpen.addEventListener('click', function () {
+  openSetupWindow();
+});
+
+buttonSetupOpen.addEventListener('keydown', function (evt) {
+  if (evt.key === ENTER_KEY) {
+    openSetupWindow();
+  }
+});
+
+setupWindow.querySelector('.setup-user-name').addEventListener('keydown', function (evt) {
+  evt.stopPropagation();
+  setupWindow.querySelector('.setup-submit').focus();
+});
+
+var closeSetupWindow = function () {
+  setupWindow.classList.add('hidden');
+  document.removeEventListener('keydown', onEscButtonClick);
+};
+
+var buttonCloseSetup = setupWindow.querySelector('.setup-close');
+var onButtonCloseSetup = function () {
+  closeSetupWindow();
+};
+buttonCloseSetup.addEventListener('click', onButtonCloseSetup);
+
+var onEscButtonClick = function (evt) {
+  if (evt.key === ESC_KEY) {
+    closeSetupWindow();
+  }
+};
