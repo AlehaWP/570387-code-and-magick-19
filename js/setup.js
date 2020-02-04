@@ -114,13 +114,13 @@ buttonCloseSetup.addEventListener('keydown', function (evt) {
 
 // У fireball backgroundColor почему то все преобразует к rgb. Как победить не нашел, пока пришлось выкручиваться так. !обсудить с наставником
 function rgb2hex(rgb) {
-  var rgb = rgb.match(/^rgb?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?\)/i);
+  var rgbArr = rgb.match(/^rgb?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?\)/i);
 
-  if (rgb && rgb.length === 4) {
+  if (rgbArr && rgbArr.length === 4) {
     return '#' +
-    ('0' + parseInt(rgb[1], 10).toString(16)).slice(-2) +
-    ('0' + parseInt(rgb[2], 10).toString(16)).slice(-2) +
-    ('0' + parseInt(rgb[3], 10).toString(16)).slice(-2);
+    ('0' + parseInt(rgbArr[1], 10).toString(16)).slice(-2) +
+    ('0' + parseInt(rgbArr[2], 10).toString(16)).slice(-2) +
+    ('0' + parseInt(rgbArr[3], 10).toString(16)).slice(-2);
   } else {
     return '';
   }
@@ -135,7 +135,7 @@ var changeElementColor = function (element, colors, colorProperty) {
     if ((currentColorIndex === -1) && (currentColor.indexOf('rgb') === 0)) {
       currentColorIndex = colors.indexOf(rgb2hex(currentColor));
     }
-    var newIndex = (currentColorIndex + 1) % colors.length;
+    newIndex = (currentColorIndex + 1) % colors.length;
   }
   element.style[colorProperty] = colors[newIndex];
 };
