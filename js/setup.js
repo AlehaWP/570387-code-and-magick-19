@@ -112,33 +112,51 @@ buttonCloseSetup.addEventListener('keydown', function (evt) {
   }
 });
 
-var changeElementColor = function (element, colors) {
-  var currentColor = element.style.fill;
-  var currentColorIndex = colors.indexOf(currentColor);
-  var newIndex = (currentColorIndex + 1) % colors.length;
-  element.style.fill = colors[newIndex];
+function rgb2hex(rgb) {
+  var rgb = rgb.match(/^rgb?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?\)/i);
+
+  if (rgb && rgb.length === 4) {
+    return '#' +
+    ('0' + parseInt(rgb[1], 10).toString(16)).slice(-2) +
+    ('0' + parseInt(rgb[2], 10).toString(16)).slice(-2) +
+    ('0' + parseInt(rgb[3], 10).toString(16)).slice(-2);
+  } else {
+    return '';
+  }
+}
+
+var changeElementColor = function (element, colors, colorProperty) {
+  var currentColor = element.style[colorProperty];
+  // чтобы если цвета в свойстве нет, менялось на второй цвет в массиве.
+  var newIndex = 1;
+  if (currentColor.length !== 0) {
+    var currentColorIndex = colors.indexOf(currentColor);
+    if ((currentColorIndex === -1) && (currentColor.indexOf('rgb') === 0)) {
+      currentColorIndex = colors.indexOf(rgb2hex(currentColor));
+    }
+    var newIndex = (currentColorIndex + 1) % colors.length;
+  }
+  element.style[colorProperty] = colors[newIndex];
 };
 
-var changeElementColorByBackgroundColor = function (element, colors) {
-  var currentColor = element.style.backgroundColor;
-  // менять через input
-  console.log(element.style.backgroundColor);
-  var currentColorIndex = colors.indexOf(currentColor);
-  var newIndex = (currentColorIndex + 1) % colors.length;
-  element.style.backgroundColor = colors[newIndex];
+var changeInputValue = function (parrent, name, value) {
+  parrent.querySelector('[name=' + name + ']').value = value;
 };
 
 var wizardCoat = setupWindow.querySelector('.wizard-coat');
 wizardCoat.addEventListener('click', function () {
-  changeElementColor(wizardCoat, COAT_COLORS);
+  changeElementColor(wizardCoat, COAT_COLORS, 'fill');
+  changeInputValue(setupWindow, 'coat-color', wizardCoat.style.fill);
 });
 
 var wizardEyes = setupWindow.querySelector('.wizard-eyes');
 wizardEyes.addEventListener('click', function () {
-  changeElementColor(wizardEyes, EYES_COLORS);
+  changeElementColor(wizardEyes, EYES_COLORS, 'fill');
+  changeInputValue(setupWindow, 'eyes-color', wizardEyes.style.fill);
 });
 
 var fireball = setupWindow.querySelector('.setup-fireball-wrap');
 fireball.addEventListener('click', function () {
-  changeElementColorByBackgroundColor(fireball, FIREBALL_COLORS);
+  changeElementColor(fireball, FIREBALL_COLORS, 'backgroundColor');
+  changeInputValue(setupWindow, 'fireball-color', rgb2hex(fireball.style.backgroundColor));
 });
