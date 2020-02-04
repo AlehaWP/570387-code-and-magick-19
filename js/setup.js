@@ -112,6 +112,7 @@ buttonCloseSetup.addEventListener('keydown', function (evt) {
   }
 });
 
+// У fireball backgroundColor почему то все преобразует к rgb. Как победить не нашел, пока пришлось выкручиваться так. !обсудить с наставником
 function rgb2hex(rgb) {
   var rgb = rgb.match(/^rgb?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?\)/i);
 
