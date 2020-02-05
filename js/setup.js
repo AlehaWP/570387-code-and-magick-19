@@ -91,16 +91,6 @@ var closeSetupWindow = function () {
   document.removeEventListener('keydown', onEscButtonClick);
 };
 
-buttonSubmit.addEventListener('click', function () {
-  closeSetupWindow();
-});
-
-buttonSubmit.addEventListener('keydown', function (evt) {
-  if (evt.key === ENTER_KEY) {
-    closeSetupWindow();
-  }
-});
-
 var buttonCloseSetup = setupWindow.querySelector('.setup-close');
 buttonCloseSetup.addEventListener('click', function () {
   closeSetupWindow();
@@ -140,24 +130,27 @@ var changeElementColor = function (element, colors, colorProperty) {
   element.style[colorProperty] = colors[newIndex];
 };
 
-var changeInputValue = function (parrent, name, value) {
-  parrent.querySelector('[name=' + name + ']').value = value;
+var changeInputValue = function (input, value) {
+  input.value = value;
 };
 
 var wizardCoat = setupWindow.querySelector('.wizard-coat');
+var wizardCoatInput = setupWindow.querySelector('[name="coat-color"]');
 wizardCoat.addEventListener('click', function () {
   changeElementColor(wizardCoat, COAT_COLORS, 'fill');
-  changeInputValue(setupWindow, 'coat-color', wizardCoat.style.fill);
+  changeInputValue(wizardCoatInput, wizardCoat.style.fill);
 });
 
 var wizardEyes = setupWindow.querySelector('.wizard-eyes');
+var wizardEyesInput = setupWindow.querySelector('[name="eyes-color"]');
 wizardEyes.addEventListener('click', function () {
   changeElementColor(wizardEyes, EYES_COLORS, 'fill');
-  changeInputValue(setupWindow, 'eyes-color', wizardEyes.style.fill);
+  changeInputValue(wizardEyesInput, wizardEyes.style.fill);
 });
 
 var fireball = setupWindow.querySelector('.setup-fireball-wrap');
+var fireballInput = setupWindow.querySelector('[name="eyes-color"]');
 fireball.addEventListener('click', function () {
-  changeElementColor(fireball, FIREBALL_COLORS, 'backgroundColor');
-  changeInputValue(setupWindow, 'fireball-color', rgb2hex(fireball.style.backgroundColor));
+  changeElementColor(fireball, FIREBALL_COLORS, 'fireball-color');
+  changeInputValue(fireballInput, rgb2hex(fireball.style.backgroundColor));
 });
