@@ -135,8 +135,6 @@ var onWizardEyesClick = function () {
   eyesColorCurrentIndex = ++eyesColorCurrentIndex % EYES_COLORS.length;
 };
 
-// Тест
-
 var fireball = setupWindow.querySelector('.setup-fireball-wrap');
 var fireballInput = setupWindow.querySelector('[name="eyes-color"]');
 var fireballColorCurrentIndex = START_COLORS_INDEX;
