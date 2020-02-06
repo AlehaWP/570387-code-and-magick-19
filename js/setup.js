@@ -109,22 +109,8 @@ buttonCloseSetup.addEventListener('keydown', function (evt) {
   }
 });
 
-function rgb2hex(rgb) {
-  var rgbArr = rgb.match(/^rgb?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?\)/i);
-
-  if (rgbArr && rgbArr.length === 4) {
-    return '#' +
-    ('0' + parseInt(rgbArr[1], 10).toString(16)).slice(-2) +
-    ('0' + parseInt(rgbArr[2], 10).toString(16)).slice(-2) +
-    ('0' + parseInt(rgbArr[3], 10).toString(16)).slice(-2);
-  } else {
-    return rgb;
-  }
-}
-
 var changeElementColor = function (element, colorIndex, colors, colorProperty) {
-  var newColorIndex = colorIndex % colors.length;
-  element.style[colorProperty] = colors[newColorIndex];
+  element.style[colorProperty] = colors[colorIndex];
 };
 
 var changeInputValue = function (input, value) {
@@ -135,22 +121,25 @@ var wizardCoat = setupWindow.querySelector('.wizard-coat');
 var wizardCoatInput = setupWindow.querySelector('[name="coat-color"]');
 var coatColorCurrentIndex = START_COLORS_INDEX;
 var onWizardCoatClick = function () {
-  changeElementColor(wizardCoat, coatColorCurrentIndex++, COAT_COLORS, 'fill');
-  changeInputValue(wizardCoatInput, wizardCoat.style.fill);
+  changeElementColor(wizardCoat, coatColorCurrentIndex, COAT_COLORS, 'fill');
+  changeInputValue(wizardCoatInput, COAT_COLORS[coatColorCurrentIndex]);
+  coatColorCurrentIndex = ++coatColorCurrentIndex % COAT_COLORS.length;
 };
 
 var wizardEyes = setupWindow.querySelector('.wizard-eyes');
 var wizardEyesInput = setupWindow.querySelector('[name="eyes-color"]');
 var eyesColorCurrentIndex = START_COLORS_INDEX;
 var onWizardEyesClick = function () {
-  changeElementColor(wizardEyes, eyesColorCurrentIndex++, EYES_COLORS, 'fill');
-  changeInputValue(wizardEyesInput, wizardEyes.style.fill);
+  changeElementColor(wizardEyes, eyesColorCurrentIndex, EYES_COLORS, 'fill');
+  changeInputValue(wizardEyesInput, EYES_COLORS[eyesColorCurrentIndex]);
+  eyesColorCurrentIndex = ++eyesColorCurrentIndex % EYES_COLORS.length;
 };
 
 var fireball = setupWindow.querySelector('.setup-fireball-wrap');
 var fireballInput = setupWindow.querySelector('[name="eyes-color"]');
 var fireballColorCurrentIndex = START_COLORS_INDEX;
 var onFireballClick = function () {
-  changeElementColor(fireball, fireballColorCurrentIndex++, FIREBALL_COLORS, 'backgroundColor');
-  changeInputValue(fireballInput, rgb2hex(fireball.style.backgroundColor));
+  changeElementColor(fireball, fireballColorCurrentIndex, FIREBALL_COLORS, 'backgroundColor');
+  changeInputValue(fireballInput, FIREBALL_COLORS[fireballColorCurrentIndex]);
+  fireballColorCurrentIndex = ++fireballColorCurrentIndex % FIREBALL_COLORS.length;
 };
