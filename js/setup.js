@@ -14,6 +14,8 @@ var WIZARDS_QUANTITY = 4;
 var ENTER_KEY = 'Enter';
 var ESC_KEY = 'Escape';
 
+var START_COLORS_INDEX = 1;
+
 var returnRandomElement = function (arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 };
@@ -62,7 +64,6 @@ similarList.appendChild(fragmentToAdd);
 
 
 var setupWindow = document.querySelector('.setup');
-var buttonSubmit = setupWindow.querySelector('.setup-submit');
 
 var onEscButtonClick = function (evt) {
   if ((evt.key === ESC_KEY) && (event.target.tagName !== 'INPUT')) {
@@ -73,6 +74,9 @@ var onEscButtonClick = function (evt) {
 var openSetupWindow = function () {
   setupWindow.classList.remove('hidden');
   document.addEventListener('keydown', onEscButtonClick);
+  wizardCoat.addEventListener('click', onWizardCoatClick);
+  wizardEyes.addEventListener('click', onWizardEyesClick);
+  fireball.addEventListener('click', onFireballClick);
 };
 
 var buttonSetupOpen = document.querySelector('.setup-open-icon');
@@ -89,6 +93,9 @@ buttonSetupOpen.addEventListener('keydown', function (evt) {
 var closeSetupWindow = function () {
   setupWindow.classList.add('hidden');
   document.removeEventListener('keydown', onEscButtonClick);
+  wizardCoat.removeEventListener('click', onWizardCoatClick);
+  wizardEyes.removeEventListener('click', onWizardEyesClick);
+  fireball.removeEventListener('click', onFireballClick);
 };
 
 var buttonCloseSetup = setupWindow.querySelector('.setup-close');
@@ -102,7 +109,6 @@ buttonCloseSetup.addEventListener('keydown', function (evt) {
   }
 });
 
-// У fireball backgroundColor почему то все преобразует к rgb. Как победить не нашел, пока пришлось выкручиваться так. !обсудить с наставником
 function rgb2hex(rgb) {
   var rgbArr = rgb.match(/^rgb?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?\)/i);
 
@@ -112,22 +118,13 @@ function rgb2hex(rgb) {
     ('0' + parseInt(rgbArr[2], 10).toString(16)).slice(-2) +
     ('0' + parseInt(rgbArr[3], 10).toString(16)).slice(-2);
   } else {
-    return '';
+    return rgb;
   }
 }
 
-var changeElementColor = function (element, colors, colorProperty) {
-  var currentColor = element.style[colorProperty];
-  // чтобы если цвета в свойстве нет, менялось на второй цвет в массиве.
-  var newIndex = 1;
-  if (currentColor.length !== 0) {
-    var currentColorIndex = colors.indexOf(currentColor);
-    if ((currentColorIndex === -1) && (currentColor.indexOf('rgb') === 0)) {
-      currentColorIndex = colors.indexOf(rgb2hex(currentColor));
-    }
-    newIndex = (currentColorIndex + 1) % colors.length;
-  }
-  element.style[colorProperty] = colors[newIndex];
+var changeElementColor = function (element, colorIndex, colors, colorProperty) {
+  var newColorIndex = colorIndex % colors.length;
+  element.style[colorProperty] = colors[newColorIndex];
 };
 
 var changeInputValue = function (input, value) {
@@ -136,21 +133,24 @@ var changeInputValue = function (input, value) {
 
 var wizardCoat = setupWindow.querySelector('.wizard-coat');
 var wizardCoatInput = setupWindow.querySelector('[name="coat-color"]');
-wizardCoat.addEventListener('click', function () {
-  changeElementColor(wizardCoat, COAT_COLORS, 'fill');
+var coatColorCurrentIndex = START_COLORS_INDEX;
+var onWizardCoatClick = function () {
+  changeElementColor(wizardCoat, coatColorCurrentIndex++, COAT_COLORS, 'fill');
   changeInputValue(wizardCoatInput, wizardCoat.style.fill);
-});
+};
 
 var wizardEyes = setupWindow.querySelector('.wizard-eyes');
 var wizardEyesInput = setupWindow.querySelector('[name="eyes-color"]');
-wizardEyes.addEventListener('click', function () {
-  changeElementColor(wizardEyes, EYES_COLORS, 'fill');
+var eyesColorCurrentIndex = START_COLORS_INDEX;
+var onWizardEyesClick = function () {
+  changeElementColor(wizardEyes, eyesColorCurrentIndex++, EYES_COLORS, 'fill');
   changeInputValue(wizardEyesInput, wizardEyes.style.fill);
-});
+};
 
 var fireball = setupWindow.querySelector('.setup-fireball-wrap');
 var fireballInput = setupWindow.querySelector('[name="eyes-color"]');
-fireball.addEventListener('click', function () {
-  changeElementColor(fireball, FIREBALL_COLORS, 'fireball-color');
+var fireballColorCurrentIndex = START_COLORS_INDEX;
+var onFireballClick = function () {
+  changeElementColor(fireball, fireballColorCurrentIndex++, FIREBALL_COLORS, 'backgroundColor');
   changeInputValue(fireballInput, rgb2hex(fireball.style.backgroundColor));
-});
+};
