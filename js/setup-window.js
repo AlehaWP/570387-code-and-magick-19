@@ -5,7 +5,7 @@
   var ESC_KEY = 'Escape';
 
   var wizardsList = window.dataMockup.createWizardsList();
-  var fragmentToAdd = window.wizards.returnFragmentWithWizards(wizardsList);
+  var fragmentToAdd = window.wizards.returnFragmentWith(wizardsList);
 
   var setupSimilar = document.querySelector('.setup-similar');
   setupSimilar.classList.remove('hidden');

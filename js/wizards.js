@@ -19,6 +19,6 @@
   };
 
   window.wizards = {
-    returnFragmentWithWizards: returnFragmentWithWizards
+    returnFragmentWith: returnFragmentWithWizards
   };
 })();
