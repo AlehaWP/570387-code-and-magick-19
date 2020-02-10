@@ -3,8 +3,9 @@
 (function () {
   var ENTER_KEY = 'Enter';
   var ESC_KEY = 'Escape';
+  var data = window.dataMockup;
 
-  var wizardsList = window.dataMockup.createWizardsList();
+  var wizardsList = data.wizardsList;
   var fragmentToAdd = window.wizards.returnFragmentWith(wizardsList);
 
   var setupSimilar = document.querySelector('.setup-similar');
@@ -26,7 +27,7 @@
   };
 
 
-  var Colors = window.dataMockup.Colors;
+  var Colors = data.Colors;
   var wizardCoat = setupWindow.querySelector('.wizard-coat');
   var wizardCoatInput = setupWindow.querySelector('[name="coat-color"]');
   var wizardEyes = setupWindow.querySelector('.wizard-eyes');

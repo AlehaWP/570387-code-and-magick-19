@@ -27,7 +27,7 @@
     };
   };
 
-  var createWizardsList = function () {
+  var returnWizardsList = function () {
     var resultArr = [];
     for (var i = 0; i < WIZARDS_QUANTITY; i++) {
       resultArr[i] = createWizard();
@@ -36,7 +36,7 @@
   };
 
   window.dataMockup = {
-    createWizardsList: createWizardsList,
+    wizardsList: returnWizardsList(),
     Colors: Colors
   };
 })();
